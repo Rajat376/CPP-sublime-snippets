@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+auto check = [&](int k)
+			{
+				return true;
+			};
+			function<int(int, int)>bs = [&](int l, int r)
+			{	if (l == r)
+				{	if (check(l))
+						return l;
+					else
+						return l + 1;
+				}
+				int m = (l + r) / 2;
+				if (check(m))
+					return bs(l, m);
+				else
+					return bs(m + 1, r);
+			};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>binary search</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+vector<string> split(const string& input, char delimiter) {
+        vector<string> tokens;
+        size_t start = 0;
+        size_t end = input.find(delimiter);
+
+        while (end != string::npos) {
+            tokens.push_back(input.substr(start, end - start));
+            start = end + 1;
+            end = input.find(delimiter, start);
+        }
+
+        tokens.push_back(input.substr(start));
+
+        return tokens;
+    }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>split</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+        int M = N - 1;
+        cin >> M;
+        vector<vector<int>>adj(N);
+        for (int i = 0; i < M ; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--;
+            v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>graph input</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,0 +1,128 @@
+<snippet>
+	<content><![CDATA[
+class Node
+{
+public:
+	int val;
+};
+class segtree
+{
+public:
+	vector<Node>tree;
+	bool lazy = false;
+	template<typename M>
+	void initd(int i, M num)
+	{
+		tree[i].val=num;
+	}
+	Node unite(Node a, Node b)
+	{
+		Node res;
+		res.val=max(a.val,b.val);
+		return res;
+	}
+	void pull(int i, int a, int b)
+	{
+		tree[i] = unite(tree[a], tree[b]);
+	}
+	template<typename M>
+	void build(int i, int l, int r, vector<M>&v)
+	{
+
+		if (l == r)
+		{
+			initd(i, v[l]);
+			return;
+		}
+		int m = ((l + r) >> 1);
+		int sz = ((m - l + 1) << 1);
+		build(i + 1, l, m, v);
+		build(i + sz, m + 1, r, v);
+		pull(i, i + 1, i + sz );
+	}
+	template<typename M>
+	void build(int i, int l, int r, M init)
+	{
+
+		if (l == r)
+		{
+			initd(i, init);
+			return;
+		}
+		int m = ((l + r) >> 1);
+		int sz = ((m - l + 1) << 1);
+		build(i + 1, l, m, init);
+		build(i + sz, m + 1, r, init);
+		pull(i, i + 1, i + sz );
+	}
+	template<typename M>
+	segtree(int N , M init)
+	{
+		tree.resize((N << 1));
+		build(0, 0, N - 1, init);
+	}
+	template<typename M>
+	segtree(vector<M>&v)
+	{
+		int N = v.size();
+		tree.resize((N << 1));
+		build(0, 0, N - 1, v);
+
+	}
+
+	template<typename M>
+	void update(int i, int x, int L, int R, M &num)
+	{
+		if (L == R)
+		{
+			initd(i, num);
+			return;
+		}
+		int m = ((L+R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (x <= m)
+			update(i + 1, x, L, m, num);
+		else
+			update(i + sz, x, m + 1, R, num);
+		pull(i, i + 1, i + sz );
+	}
+	Node get(int i, int l, int r, int L, int R)
+	{
+		int m = ((L+R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (L >= l && R <= r)
+			return tree[i];
+		else if (r <= m)
+			return get(i + 1, l, r, L, m);
+		else if (l > m)
+			return get(i + sz, l, r, m + 1, R);
+		else
+			return unite(get(i + 1, l, r, L, m), get(i + sz, l, r, m + 1, R));
+	}
+	Node get(int l, int r)
+	{
+
+		int N = tree.size() / 2;
+		assert(l >= 0 && r < N);
+		return get(0, l, r, 0, N - 1);
+	}
+	//i is index l,r are of query L,R are current range M is update element
+	// template<typename M>
+	// void upd(int l,int r,M num)
+	// {
+
+	// }
+	template<typename M>
+	void upd(int i, M num)
+	{
+		int N = tree.size() / 2;
+		update(0, i, 0, N - 1, num);
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>segtree</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

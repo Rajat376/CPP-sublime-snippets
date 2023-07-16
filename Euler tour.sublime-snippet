@@ -1,0 +1,39 @@
+<snippet>
+	<content><![CDATA[
+class EulerTour
+{
+    vector<vector<int>>graph;
+public:
+    vector<int>entry, exits, order;
+    int cnt = 0;
+    void dfs(int curr, int par)
+    {
+        entry[curr] = cnt;
+        order[cnt] = curr;
+        cnt++;
+        for (auto it : graph[curr])
+        {
+            if (it != par)
+                dfs(it, curr);
+        }
+        exits[curr] = cnt - 1;
+
+    }
+    EulerTour(vector<vector<int>>&graph)
+    {
+        int N = graph.size();
+        this->graph = graph;
+        entry.resize(N);
+        exits.resize(N);
+        order.resize(N);
+        dfs(0, -1);
+
+    }
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Euler tour</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

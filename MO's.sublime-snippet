@@ -1,0 +1,77 @@
+<snippet>
+	<content><![CDATA[
+class MOs
+{
+public:
+	int P = 1500;
+	vector<array<int, 3>>query;
+	vector<int>A;
+	static bool compare(const array<int, 3>& R, const array<int, 3>& S, int P)
+	{
+		if (R[0] / P != S[0] / P)
+			return R[0] < S[0];
+		else
+			return S[1] < R[1];
+	}
+
+	void init()
+	{
+		int P = this->P; // Assign P from the class
+
+		sort(query.begin(), query.end(), [P](const array<int, 3>& R, const array<int, 3>& S) {
+			return compare(R, S, P);
+		});
+		debug(query);
+	}
+
+	MOs(vector<array<int, 3>>&query, vector<int>&A)
+	{
+		this->query = query;
+		this->A = A;
+		int N = A.size();
+		P = sqrt(N);
+		init();
+
+		
+
+
+	}
+	vector<int> process()
+	{
+		vector<int>ans(query.size());
+		int l=0;
+		int r=0;
+		int cnt=0;
+		for(auto it:query)
+		{
+			// right to right
+			while(r<=it[1])
+			{
+				r++;
+			}
+			//left to left
+			while(l>it[0])
+			{
+				l--;
+			}
+			//right to left
+			while(r>it[1]+1)
+			{
+				r--;
+			}
+			// left to right
+			while(l<=it[0])
+			{
+				l++;
+			}
+			ans[it[2]]=cnt;
+		}
+		return ans;
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>MO's Algorithm</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

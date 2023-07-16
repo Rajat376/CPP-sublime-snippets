@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+vector<int>fact;
+int MAX=1e5+1;
+fact.resize(MAX+1);
+fact[0]=1;
+for(int i=1;i<=MAX;i++)
+{
+	fact[i]=(fact[i-1]*i)%MOD;
+}
+auto NCR=[&](int N,int R)
+{
+	return (N<0 || R>N)?0:(((fact[N]*modInverse(fact[R],MOD))%MOD)*modInverse(fact[N-R],MOD))%MOD;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>NCR</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

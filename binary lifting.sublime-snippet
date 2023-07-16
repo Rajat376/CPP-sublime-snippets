@@ -1,0 +1,103 @@
+<snippet>
+	<content><![CDATA[
+vector<int>depth(N);
+		vector<vector<int>>bl(N, vector<int>(20, -1));
+		function<void(int, int, int)>d_dfs = [&](int cur, int par, int d)
+		{
+			depth[cur] = d;
+			for (auto it : adj[cur])
+			{
+				if (it != par)
+					d_dfs(it, cur, d + 1);
+			}
+			return;
+		};
+		function<void(int, int)>binary_lift = [&](int curr, int par)
+		{
+			bl[curr][0] = par;
+			if (par != -1)
+			{
+				for (int i = 1; i < 20; i++)
+				{
+					if (bl[curr][i - 1] != -1)
+						bl[curr][i] = bl[bl[curr][i - 1]][i - 1];
+				}
+			}
+			for (auto it : adj[curr])
+			{
+				if (it != par)
+					binary_lift(it, curr);
+			}
+			return;
+		};
+		function<int(int, int)>get_kth = [&](int curr, int k)
+		{
+			for (int i = 0; i < 20; i++)
+			{
+				if (curr == -1)
+					return curr;
+				if (k & (1 << i))
+					curr = bl[curr][i];
+			}
+			return curr;
+		};
+		auto get_distance = [&](int a, int b)
+		{
+			int dis = abs(depth[a] - depth[b]);
+
+			if (depth[a] < depth[b])
+			{
+				b = get_kth(b, dis);
+			}
+			else if (depth[a] > depth[b])
+			{
+				a = get_kth(a, dis);
+			}
+			if (a == b)
+				return dis;
+			for (int i = 19; i >= 0; i--)
+			{
+
+				if (bl[a][i] != bl[b][i])
+				{
+					dis += (1 << (i + 1));
+					a = bl[a][i];
+					b = bl[b][i];
+				}
+			}
+			return dis + 2;
+		};
+		auto LCA = [&](int a, int b)
+		{
+			int dis = abs(depth[a] - depth[b]);
+			if (depth[a] < depth[b])
+			{
+				b = get_kth(b, dis);
+			}
+			else if (depth[a] > depth[b])
+			{
+				a = get_kth(a, dis);
+			}
+			if (a == b)
+				return a;
+
+			for (int i = 19; i >= 0; i--)
+			{
+
+				if (bl[a][i] != bl[b][i])
+				{
+
+					a = bl[a][i];
+					b = bl[b][i];
+				}
+			}
+			return bl[a][0];
+		};
+		d_dfs(0, -1, 0);
+		binary_lift(0, -1);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>binary lifting</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

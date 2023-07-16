@@ -1,0 +1,47 @@
+<snippet>
+	<content><![CDATA[
+template <typename M>
+class sparsetable {
+public:
+    int LOG;
+    vector<vector<M>> v;
+    M garbage;
+    function<M(M, M)> unite;
+
+    template <typename T>
+    sparsetable(vector<T>& a) : unite([ & ](M a, M b) { return min(a, b); }) {
+        init(a);
+    }
+
+    template <typename T>
+    sparsetable(vector<T>& a, function<M(M, M)> comp) : unite(comp) {
+        init(a);
+    }
+
+    template <typename T>
+    void init(vector<T>& a) {
+        int N = a.size();
+        LOG = 31 - __builtin_clz(N);
+        v.resize(LOG + 1);
+        v[0] = a;
+        int MAX = 1LL;
+        for (int i = 1; i <= LOG; i++, MAX <<= 1LL) {
+            v[i].resize(N - (MAX<<1) + 1);
+            for (int j = 0; j < N - (MAX<<1) + 1; j++) {
+                v[i][j] = unite(v[i - 1][j], v[i - 1][j + (MAX)]);
+            }
+        }
+    }
+
+    M get(int l, int r) {
+        int log = __builtin_clz(r - l + 1);
+        log = 31 - log;
+        return unite(v[log][l], v[log][r - (1LL << log) + 1]);
+    }
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sparse Table</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

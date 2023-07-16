@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+auto computeFloydWarshall=[](vector<vector<int>>&adj){
+			int N=adj.size();
+			for(int k=0;k<N;k++)
+			{
+				for(int i=0;i<N;i++)
+				{
+					for(int j=0;j<N;j++)
+					{
+						adj[i][j]=adj[j][i]=min(adj[i][j],adj[i][k]+adj[k][j]);
+					}
+				}
+			}
+		};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>floydWarshall</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

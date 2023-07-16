@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+#define MAX 10000000
+int sieve[MAX+1];
+void Sieve()
+{
+	for(int i=1;i<=MAX;i++)
+	{
+		sieve[i]=i;
+	}
+	for(int i=2;i*i<=MAX;i++)
+	{
+		if(sieve[i]==i)
+		{
+			for(int j=i*i;j<=MAX;j+=i)
+			{
+				if(sieve[j]==j)
+				sieve[j]=i;
+			}
+		}
+	}
+}
+vector<int>factor(int x,bool unique)
+{
+	vector<int>v;
+	if(unique)
+	{
+		while(x!=1)
+		{   if(v.empty() || v.back()!=sieve[x])
+			v.push_back(sieve[x]);
+
+			x/=sieve[x];
+		}
+	}
+	else
+	{
+		while(x!=1)
+		{
+			v.push_back(sieve[x]);
+			x/=sieve[x];
+		}
+	}
+	return v;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sieve</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

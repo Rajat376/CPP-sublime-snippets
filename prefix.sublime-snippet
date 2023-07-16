@@ -1,0 +1,43 @@
+<snippet>
+	<content><![CDATA[
+template<typename M>
+class prefix
+{
+public:
+	vector<M>v;
+	function<M(M,M)>unite=[](M a,M b){return a+b;};
+	function<M(M,M)>anti=[](M a,M b){return a-b;};
+	M def=0;
+	template<typename T>
+	void init(vector<T>&a)
+	{
+		v.push_back(def);
+		for(auto it:a)
+		{
+			v.push_back(unite(v.back(),it));
+		}
+	}
+	template<typename T>
+	prefix(vector<T>&a)
+	{
+		init(a);
+	}
+	template<typename T>
+	prefix(vector<T>&a,function<M(M,M)>unite,function<M(M,M)>anti,M def)
+	{
+		this->unite=unite;
+		this->def=def;
+		this->anti=anti;
+		init(a);
+	}
+	
+	M get(int l, int r)
+	{
+		return anti(v[r+1],v[l]);
+	}
+};]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>prefix</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

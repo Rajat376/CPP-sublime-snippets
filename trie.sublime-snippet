@@ -1,0 +1,57 @@
+<snippet>
+	<content><![CDATA[
+	class trie
+	{
+	public:
+		vector<trie*> next; // Vector of trie* pointers
+		bool endofword;
+
+		// Constructor
+		trie()
+		{
+			next.resize(26, NULL); // Initialize next with 26 NULL pointers
+			endofword = false;
+		}
+
+		void insert(string S)
+		{
+			int N = S.length();
+			trie* ptr = this;
+
+			for (int i = 0; i < N; i++)
+			{
+				int ind = S[i] - 'a';
+				if (ptr->next[ind] == NULL)
+				{
+					ptr->next[ind] = new trie;
+				}
+				ptr = ptr->next[ind];
+			}
+
+			ptr->endofword = true;
+		}
+
+		bool count(string S)
+		{
+			int N = S.length();
+			trie* ptr = this;
+
+			for (int i = 0; i < N; i++)
+			{
+				int ind = S[i] - 'a';
+				if (ptr->next[ind] == NULL)
+				{
+					return false;
+				}
+				ptr = ptr->next[ind];
+			}
+
+			return ptr->endofword;
+		}
+	};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>trie</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

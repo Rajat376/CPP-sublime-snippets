@@ -1,0 +1,120 @@
+<snippet>
+	<content><![CDATA[
+class HeavyLight
+{
+public:
+	bool lazy = false;
+	vector<int>parent, depth, heavy, order, root;
+	segtree ST;
+	int unite(int a, int b)
+	{
+		return a ^ b;
+	}
+	int dfs(int curr, int par, int d, vector<vector<int>>&adj)
+	{
+		depth[curr] = d;
+		parent[curr] = par;
+		int size = 1;
+		pair<int, int>maxsz = {0, 0};
+		for (auto it : adj[curr])
+		{
+			if (it != par)
+			{	int sz = dfs(it, curr, d + 1, adj);
+				size += sz;
+				maxsz = max(maxsz, make_pair(sz, it));
+			}
+		}
+		if (maxsz.first * 2 > size)
+			heavy[curr] = maxsz.second;
+		return size;
+	}
+	void dfs(int curr, int par, bool isheavy, int &cnt, vector<vector<int>>&adj)
+	{
+		order[curr] = cnt;
+		cnt++;
+		if (isheavy)
+		{
+			root[curr] = root[parent[curr]];
+		}
+		else
+		{
+			root[curr] = curr;
+		}
+		if (heavy[curr] != -1)
+		{
+			dfs(heavy[curr], curr, true, cnt, adj);
+		}
+		for (auto it : adj[curr])
+		{
+			if (it != par && it != heavy[curr])
+			{
+				dfs(it, curr, false, cnt, adj);
+			}
+		}
+	}
+	template<typename T>
+	void init(vector<vector<int>>&adj, vector<T>&value)
+	{
+		int N = value.size();
+		order .resize(N);
+		root  .resize(N);
+		parent.resize(N);
+		depth .resize(N);
+		heavy .resize(N, -1);
+		dfs(0, -1, 0, adj);
+		int cnt = 0;
+		dfs(0, -1, false, cnt, adj);
+		vector<int>A(N);
+		for (int i = 0; i < N; i++)
+		{
+			A[order[i]] = value[i];
+		}
+		ST = segtree(A);
+	}
+	template<typename T>
+	HeavyLight(vector<vector<int>>&adj, vector<T>&value)
+	{
+		init(adj, value);
+	}
+	void processPaths(int l, int r, vector<pair<int, int>>&v)
+	{
+		while (l != r  && l != -1 && r != -1)
+		{
+			if (depth[root[r]] > depth[root[l]])swap(l, r);
+
+			if (root[l] == root[r])
+			{
+				if (depth[r] > depth[l])
+					swap(l, r);
+				v.push_back({order[r], order[l]});
+				return;
+			}
+			v.push_back({order[root[l]], order[l]});
+			l = parent[root[l]];
+		}
+		v.push_back({order[l],order[l]});
+	}
+	int get(int l, int r)
+	{
+		vector<pair<int, int>>v;
+		processPaths(l, r, v);
+		int ans = ST.get(v[0].first, v[0].second).val;
+		for (int i = 1; i < v.size(); i++) {
+			ans = unite(ans, ST.get(v[i].first, v[i].second).val);
+		}
+		return ans;
+
+	}
+	template<typename M>
+	void upd(int i, M num)
+	{
+		ST.upd(order[i], num);
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>HLD on Nodes</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

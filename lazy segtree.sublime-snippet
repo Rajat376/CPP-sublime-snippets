@@ -1,0 +1,211 @@
+<snippet>
+	<content><![CDATA[
+class Node
+{
+public:
+	int val = 0, lazy = 0;
+	Node()
+	{
+
+	}
+	Node(int val,int lazy)
+	{
+		this->val=val;
+		this->lazy=lazy;
+	}
+};
+// void __print(Node x) {
+// 	cout << "{ ";
+// 	__print(x.val);
+// 	cout << " , " ;
+// 	__print(x.lazy);
+// 	cout << " }";
+// }
+class segtree
+{
+public:
+	vector<Node>tree;
+	bool lazy = true;
+	Node garbage=Node(1e18,0);
+	template<typename M>
+	void initd(int i, M num)
+	{
+		tree[i].val = num;
+	}
+	Node unite(Node a, Node b)
+	{
+		Node res;
+		res.val = min(a.val, b.val);
+		return res;
+	}
+	void applyLazy(int i, int lazy, int L, int R)
+	{
+		tree[i].val += lazy;
+	}
+	void push(int i, int L, int R)
+	{
+
+		int m = ((L + R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (tree[i].lazy != 0)
+		{
+			applyLazy(i, tree[i].lazy, L, R);
+			if (L != R)
+			{
+				tree[i + 1].lazy += tree[i].lazy;
+				tree[i + sz].lazy += tree[i].lazy;
+			}
+			tree[i].lazy = 0;
+		}
+	}
+	void pull(int i, int a, int b)
+	{
+		tree[i] = unite(tree[a], tree[b]);
+	}
+	template<typename M>
+	void build(int i, int l, int r, vector<M>&v)
+	{
+
+		if (l == r)
+		{
+			initd(i, v[l]);
+			return;
+		}
+		int m = ((l + r) >> 1);
+		int sz = ((m - l + 1) << 1);
+		build(i + 1, l, m, v);
+		build(i + sz, m + 1, r, v);
+		pull(i, i + 1, i + sz );
+	}
+	template<typename M>
+	void build(int i, int l, int r, M init)
+	{
+
+		if (l == r)
+		{
+			initd(i, init);
+			return;
+		}
+		int m = ((l + r) >> 1);
+		int sz = ((m - l + 1) << 1);
+		build(i + 1, l, m, init);
+		build(i + sz, m + 1, r, init);
+		pull(i, i + 1, i + sz );
+	}
+	template<typename M>
+	segtree(int N , M init)
+	{
+		tree.resize((N << 1));
+		build(0, 0, N - 1, init);
+	}
+	template<typename M>
+	segtree(vector<M>&v)
+	{
+		int N = v.size();
+		tree.resize((N << 1));
+		build(0, 0, N - 1, v);
+
+	}
+
+	template<typename M>
+	void update(int i, int x, int L, int R, M &num)
+	{
+		if (L == R)
+		{
+			initd(i, num);
+			return;
+		}
+		int m = ((L + R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (x <= m)
+			update(i + 1, x, L, m, num);
+		else
+			update(i + sz, x, m + 1, R, num);
+
+		pull(i, i + 1, i + sz );
+	}
+
+	template<typename M>
+	void update(int i, int l, int r, int L, int R, M &num)
+	{
+
+		push(i, L, R);
+		if(L>r || R<l)
+			return;
+		int m = ((L + R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (l <= L && R <= r)
+		{
+
+			tree[i].lazy += num;
+			push(i, L, R);
+			return ;
+		}
+		assert(l <= r && L <= R);
+
+		update(i + 1, l, r, L, m, num);
+		update(i + sz, l, r, m + 1, R, num);
+
+		pull(i, i + 1, i + sz );
+	}
+	Node get(int i, int l, int r, int L, int R)
+	{
+
+		int m = ((L + R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if (L >= l && R <= r)
+			return tree[i];
+		else if (r <= m)
+			return get(i + 1, l, r, L, m);
+		else if (l > m)
+			return get(i + sz, l, r, m + 1, R);
+		else
+			return unite(get(i + 1, l, r, L, m), get(i + sz, l, r, m + 1, R));
+	}
+	Node lazyget(int i, int l, int r, int L, int R)
+	{
+		push(i, L, R);
+		int m = ((L + R) >> 1);
+		int sz = ((m - L + 1) << 1);
+		if(L>r || R<l)
+			return garbage;
+		Node res;
+		if (L >= l && R <= r)
+			return tree[i];
+		else
+		{
+			res = unite(lazyget(i + 1, l, r, L, m), lazyget(i + sz, l, r, m + 1, R));
+		}
+		
+		pull(i, i + 1, i + sz);
+		return res;
+	}
+	Node get(int l, int r)
+	{
+
+		int N = tree.size() / 2;
+		assert(l >= 0 && r < N);
+
+		return lazyget(0, l, r, 0, N - 1);
+	}
+
+	template<typename M>
+	void upd(int l, int r, M num)
+	{
+		int N = tree.size() / 2;
+		update(0, l, r, 0, N - 1, num);
+	}
+	template<typename M>
+	void upd(int i, M num)
+	{
+		int N = tree.size() / 2;
+		update(0, i, 0, N - 1, num);
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>lazy segtree</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

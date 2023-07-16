@@ -1,0 +1,7 @@
+[
+	{ "keys": ["ctrl+alt+c"],
+  "command": "sublime_highlight",
+  "args": { "target": "clipboard",
+            "output_type": "rtf"
+}},
+]

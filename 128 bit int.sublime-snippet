@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+#include <boost/multiprecision/cpp_int.hpp>
+using boost::multiprecision::int128_t;
+// int128_t
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>128 bit int</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

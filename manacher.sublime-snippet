@@ -1,0 +1,86 @@
+<snippet>
+	<content><![CDATA[
+auto manacherodd=[](string &S)
+	{
+		int N=S.length();
+		vector<pair<int,int>>v;
+		for(int i=0,l=-1,r=0;i<N;i++)
+		{
+			int cl=i,cr=i;
+			if(i<r)
+			{
+				int k=v[l+r-i].second-v[l+r-i].first;
+				cl-=k/2;
+				cr+=k/2;
+				if(cr>r)
+				{
+					int x=cr-r;
+					cr=r;
+					cl+=x;
+				}
+			}
+			while(cl>=0 && cr<N)
+			{
+				if(S[cl]==S[cr])
+				{
+					cl--;
+					cr++;
+				}
+				else
+					break;
+			}
+			v.push_back({cl+1,cr-1});
+			if(cr>r)
+			{
+				r=cr;
+				l=cl;
+			}
+		}
+		return v;
+	};
+	auto manachereven=[](string &S)
+	{
+		int N=S.length();
+		vector<pair<int,int>>v;
+		for(int i=0,l=-1,r=0;i<N-1;i++)
+		{
+			int cl=i,cr=i+1;
+			if(i<r-1)
+			{
+				int k=v[l+r-i-1].second-v[l+r-i-1].first;
+				cl-=k/2;
+				cr+=k/2;
+				if(cr>r-1)
+				{
+					int x=cr-r+1;
+					cr=r-1;
+					cl+=x;
+				}
+			}
+			
+			while(cl>=0 && cr<N)
+			{
+				if(S[cl]==S[cr])
+				{
+					cl--;
+					cr++;
+				}
+				else
+					break;
+			}
+			v.push_back({cl+1,cr-1});
+			if(cr>r)
+			{
+				r=cr;
+				l=cl;
+			}
+		}
+		return v;
+
+	};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>manacher</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

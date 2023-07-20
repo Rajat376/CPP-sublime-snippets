@@ -110,6 +110,16 @@ public:
 	{
 		ST.upd(order[i], num);
 	}
+	template<typename M>
+	void upd(int l,int r, M num)
+	{
+		vector<pair<int, int>>v;
+		processPaths(l, r, v);
+		for(auto it:v)
+		{
+			ST.upd(it.first,it.second,num);
+		}
+	}
 
 };
 ]]></content>

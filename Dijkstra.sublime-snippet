@@ -1,0 +1,38 @@
+<snippet>
+	<content><![CDATA[
+class dijkstra
+{
+public:
+	vector<vector<pair<int, int>>>adj;
+	dijkstra(vector<vector<pair<int, int>>>&adj)
+	{
+		this->adj = adj;
+	};
+	vector<int>get_distance(int src)
+	{
+		int N = adj.size();
+		vector<int>v(N, -1);
+		priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
+		q.push({0, src});
+		while (!q.empty())
+		{
+			pair<int, int>E = q.top();
+			q.pop();
+			if (v[E.second] != -1)
+				continue;
+			v[E.second] = E.first;
+			for (auto it : adj[E.second])
+			{
+				if (v[it.first] == -1)
+					q.push({E.first + it.second, it.first});
+			}
+		}
+		return v;
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Dijkstra</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

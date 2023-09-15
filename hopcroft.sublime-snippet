@@ -1,0 +1,113 @@
+<snippet>
+	<content><![CDATA[
+class hopcroftKarp
+{
+public:
+	const int inf = 1e18;
+	const int nil = 0;
+	vector<vector<int>>adj;
+	vector<int>dist;
+	vector<int>match;
+	vector<pair<int, int>>matching;
+	int ans = 0;
+	int N, M; // size of left and right set
+	bool dfs(int curr)
+	{
+
+		for (auto it : adj[curr])
+		{
+			if (match[it] == -1)
+			{
+				match[it] = curr;
+				match[curr] = it;
+				dist[curr]=inf;
+				return true;
+			}
+			else if (dist[match[it]] == dist[curr] + 1 && dfs(match[it]))
+			{
+				match[it] = curr;
+				match[curr] = it;
+				dist[curr]=inf;
+				return true;
+			}
+		}
+		dist[curr] = inf;
+		return false;
+	}
+	bool bfs()
+	{
+		queue<int>q;
+
+		bool freenode = false;
+		for (int i = 0; i < N; ++i)
+		{
+			if (match[i] == -1)
+				q.push(i), dist[i] = nil;
+			else
+				dist[i] = inf;
+		}
+		while (!q.empty())
+		{
+			int curr = q.front();
+			q.pop();
+			for (auto it : adj[curr])
+			{
+				if (match[it] == -1)
+				{
+					freenode = true;
+				}
+				else if (dist[match[it]] == inf)
+				{
+					dist[match[it]] = dist[curr] + 1;
+					q.push(match[it]);
+				}
+			}
+		}
+
+		return freenode;
+	}
+	void cal()
+	{
+		while (bfs())
+		{
+
+			for (int i = 0; i < N; ++i)
+			{
+
+				if (match[i] == -1 && dfs(i))
+				{
+					ans++;
+				}
+			}
+
+		}
+	}
+	hopcroftKarp(vector<vector<int>>&adj, int N, int M) // bipartite graph given
+	{
+
+		this->adj = adj;
+		this->N = N;
+		this->M = M;
+		dist.resize(N, inf);
+		match.resize(N + M, -1);
+		cal();
+		for(int i=0;i<N;i++)
+		{
+			if(match[i]!=-1)
+			{
+				matching.push_back({i,match[i]-N});
+			}
+		}
+
+	}
+	hopcroftKarp(vector<vector<int>>&adj) // necessarily given bipartite
+	{
+
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>hopcroft</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

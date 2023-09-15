@@ -1,8 +1,13 @@
 {
-	"font_size": 16,
+	"font_size": 18,
 	"save_on_focus_lost": true,
 	"ignored_packages":
 	[
 		"Vintage",
 	],
+	"hot_exit": false,
+	 "remember_open_files": false, 
+	"theme": "auto",
+	"dark_theme": "Adaptive.sublime-theme",
+	"light_theme": "Default.sublime-theme",
 }

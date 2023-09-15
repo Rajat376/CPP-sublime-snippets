@@ -137,7 +137,7 @@ public:
 		if (l <= L && R <= r)
 		{
 
-			tree[i].lazy += num;
+			tree[i].lazy = num;
 			push(i, L, R);
 			return ;
 		}

@@ -1,0 +1,36 @@
+<snippet>
+	<content><![CDATA[
+		vector<vector<int>>dp(N + 1, vector<int>(K + 1, inf));
+		dp[0][0] = 0;
+		auto cost = [&](int l, int r)
+		{
+			return (int)st.get(l - 1, r - 1);
+		};
+		for (int k = 1; k <= K; k++)
+		{
+			function<void(int, int, int, int)>dnc = [&](int l , int r, int optL, int optR)
+			{
+				if (l > r)
+					return;
+				int m = (l + r) / 2;
+				int opt = 1;
+				for (int i = optL; i <= min(m, optR); i++)
+				{
+					if (dp[m][k] <= dp[i - 1][k - 1] + cost(i, m))
+					{
+						opt = i;
+						dp[m][k] = dp[i - 1][k - 1] + cost(i, m);
+					}
+				}
+				dnc(l, m - 1, optL, opt);
+				dnc(m + 1, r, opt, optR);
+			};
+			dnc(1, N, 1, N);
+		}
+		cout << dp[N][K] << endl;
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>dnc divide conquer dp</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

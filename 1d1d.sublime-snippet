@@ -1,0 +1,77 @@
+<snippet>
+	<content><![CDATA[
+vector<int>dp(N + 1, 0);
+		dp[0] = 0;
+		dp[1] = 0;
+		int inf = 1e18;
+		auto cost = [&](int i, int j)
+		{
+			if (i > j)
+				return inf;
+			return C[i - 2] * H[j - 1];
+		};
+		deque<pair<int, int>>dq;
+		dq.push_back({1, N - 1});
+		for (int i = 2; i <= N; i++)
+		{
+
+
+			pair<int, int>ele = dq.front();
+			dq.pop_front();
+			dp[i] = dp[ele.first] + cost(ele.first + 1, i);
+			if (ele.second != 1)
+				dq.push_front({ele.first, ele.second - 1});
+			int ind = N + 1;
+			while (!dq.empty())
+			{
+				ind -= dq.back().second;
+				if (cost(i + 1, ind) + dp[i] <= cost(dq.back().first + 1, ind) + dp[dq.back().first])
+				{
+					dq.pop_back();
+				}
+				else
+				{
+					ind += dq.back().second;
+					break;
+				}
+			}
+
+			if (ind == i + 1)
+			{	dq.push_back({i, N - i});
+				continue;
+			}
+			else
+			{
+				auto check = [&](int k)
+				{
+					return (cost(i + 1, k) + dp[i] <= cost(dq.back().first + 1, k) + dp[dq.back().first]);
+				};
+				function<int(int, int)>bs = [&](int l, int r)
+				{	if (l == r)
+					{	if (check(l))
+							return l;
+						else
+							return l + 1;
+					}
+					int m = (l + r) / 2;
+					if (check(m))
+						return bs(l, m);
+					else
+						return bs(m + 1, r);
+				};
+				int idx = bs(ind - dq.back().second, ind - 1);
+				if (idx <= N)
+				{
+					int val = dq.back().first;
+					ind -= dq.back().second, dq.pop_back();
+					dq.push_back({val, idx - ind});
+					dq.push_back({i, N - idx + 1});
+				}
+			}
+		}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>1d1d</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+g++ -o C.exe -Wl,--stack,16777216 C.cpp
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>big memory</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

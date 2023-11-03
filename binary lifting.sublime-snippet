@@ -84,6 +84,31 @@ public:
 		}
 		return tree[a].bl[0];
 	};
+	int distance(int a, int b)
+	{
+		int dis = abs(tree[a].depth - tree[b].depth);
+		if (tree[a].depth < tree[b].depth)
+		{
+			b = get_kth(b, dis);
+		}
+		else if (tree[a].depth > tree[b].depth)
+		{
+			a = get_kth(a, dis);
+		}
+		if (a == b)
+			return dis;
+		for (int i = 19; i >= 0; i--)
+		{
+
+			if (tree[a].bl[i] != tree[b].bl[i])
+			{
+				dis += (1LL << (i + 1));
+				a = tree[a].bl[i];
+				b = tree[b].bl[i];
+			}
+		}
+		return dis + 2;
+	}
 	binaryLifting(vector<vector<int>>&adj)
 	{
 		this->adj = adj;
@@ -91,6 +116,10 @@ public:
 		tree.resize(N);
 		d_dfs(0, -1, 0);
 		binary_lift(0, -1);
+
+	}
+	binaryLifting()
+	{
 
 	}
 };

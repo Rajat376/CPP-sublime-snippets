@@ -1,0 +1,78 @@
+<snippet>
+	<content><![CDATA[
+class kosaraju
+{
+public:
+	vector < vector<int>>adj;
+	vector<vector<int>>Adj;
+	stack<int>stk;
+	vector<bool>visited;
+	vector<vector<int>>clusters;
+	void dfs(int curr)
+	{
+		if (visited[curr])
+			return;
+		visited[curr] = true;
+		for (auto it : adj[curr])
+		{
+			dfs(it);
+		}
+		stk.push(curr);
+	};
+	void rec(int curr, vector<int>&v)
+	{
+		if (visited[curr])
+			return;
+		visited[curr] = true;
+		v.push_back(curr);
+		for (auto it : Adj[curr])
+		{
+			rec(it, v);
+		}
+	}
+	kosaraju(vector<vector<int>>&adj)
+	{
+		this->adj = adj;
+		int N = adj.size();
+		visited.resize(N, false);
+		for (int i = 0; i < N; i++)
+		{
+			if (!visited[i])
+			{
+				dfs(i);
+			}
+		}
+		Adj.resize(N);
+		for (int i = 0; i < N; i++)
+		{
+			for (auto it : adj[i])
+			{
+				Adj[it].push_back(i);
+			}
+		}
+		for (int i = 0; i < N; i++)
+		{
+			visited[i] = false;
+		}
+		while(!stk.empty())
+		{
+		int i=stk.top();
+		stk.pop();
+			if (!visited[i])
+			{
+				vector<int>cluster;
+				rec(i, cluster);
+				clusters.push_back(cluster);
+			}
+		}	
+		
+
+
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>kosaraju</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

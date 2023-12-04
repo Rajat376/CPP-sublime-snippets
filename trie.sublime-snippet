@@ -1,54 +1,52 @@
 <snippet>
 	<content><![CDATA[
-	class trie
-	{
-	public:
-		vector<trie*> next; // Vector of trie* pointers
-		bool endofword;
+	class trie {
+public:
+	int cnt;
+	trie* next[ALPHABET_SIZE];
 
-		// Constructor
-		trie()
+
+	trie() {
+		cnt = 0;
+		for (int i = 0; i < ALPHABET_SIZE; i++)
 		{
-			next.resize(26, NULL); // Initialize next with 26 NULL pointers
-			endofword = false;
+			next[i] = nullptr;
+		}
+	}
+
+	void insert(string S) {
+		int N = S.length();
+		trie* ptr = this;
+
+		for (int i = 0; i < N; i++) {
+			char ch = S[i];
+			int ind = ch - 'a';
+			if (ptr->next[ind] == nullptr)
+				ptr->next[ind] = new trie;
+			ptr = ptr->next[ind];
+			ptr->cnt++;
 		}
 
-		void insert(string S)
-		{
-			int N = S.length();
-			trie* ptr = this;
 
-			for (int i = 0; i < N; i++)
-			{
-				int ind = S[i] - 'a';
-				if (ptr->next[ind] == NULL)
-				{
-					ptr->next[ind] = new trie;
-				}
-				ptr = ptr->next[ind];
-			}
+	}
 
-			ptr->endofword = true;
+	int count(string S) {
+		int ans = 0;
+		int N = S.length();
+		trie* ptr = this;
+
+		for (int i = 0; i < N; i++) {
+			char ch = S[i];
+			int ind = ch - 'a';
+			if (ptr->next[ind] == nullptr)
+				return ans;
+			ptr = ptr->next[ind];
+			ans += ptr->cnt;
 		}
 
-		bool count(string S)
-		{
-			int N = S.length();
-			trie* ptr = this;
-
-			for (int i = 0; i < N; i++)
-			{
-				int ind = S[i] - 'a';
-				if (ptr->next[ind] == NULL)
-				{
-					return false;
-				}
-				ptr = ptr->next[ind];
-			}
-
-			return ptr->endofword;
-		}
-	};
+		return ans;
+	}
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>trie</tabTrigger>

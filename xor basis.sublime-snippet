@@ -1,0 +1,60 @@
+<snippet>
+	<content><![CDATA[
+const int BITS = 20;
+class xorBasis
+{
+public:
+
+	int v[BITS];
+	xorBasis()
+	{
+		memset(v, 0, sizeof(v));
+	}
+	void add(int X)
+	{
+		for (int i = BITS - 1; i >= 0; i--)
+		{
+			if (X >= (1 << i))
+			{
+				if (v[i] == 0)
+				{
+					v[i] = X;
+					break;
+				}
+				else
+				{
+					X ^= v[i];
+				}
+			}
+		}
+	}
+	bool inBasis(int X)
+	{
+		for (int i = BITS - 1; i >= 0; i--)
+		{
+			if (X >= (1 << i))
+			{
+				if (v[i] != 0)
+				{
+					X ^= v[i];
+				}
+				else
+					return false;
+			}
+		}
+		return X ==	0;
+	}
+	void merge(xorBasis &A)
+	{
+		for (int i = BITS - 1; i >= 0; i--)
+		{
+			if (A.v[i])add(A.v[i]);
+		}
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>hello</tabTrigger> -->
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

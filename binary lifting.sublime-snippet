@@ -1,5 +1,6 @@
 <snippet>
 	<content><![CDATA[
+const int LIFT_SIZE = 20;
 class binaryLifting
 {
 public:
@@ -7,13 +8,15 @@ public:
 	{
 	public:
 		int par, depth;
-		vector<int>bl;
+		int bl[LIFT_SIZE];
+		// xorBasis xb[LIFT_SIZE];
 		node() {
-			bl.resize(20);
+
 		};
 	};
 	vector<vector<int>>adj;
 	vector<node>tree;
+	vector<int>A;
 	void d_dfs(int cur, int par, int d)
 	{
 		tree[cur].depth = d;
@@ -28,18 +31,17 @@ public:
 	void binary_lift(int curr, int par)
 	{
 		tree[curr].bl[0] = par;
-		if (par != -1)
+
+		for (int i = 1; i < LIFT_SIZE; i++)
 		{
-			for (int i = 1; i < 20; i++)
+			if (tree[curr].bl[i - 1] != -1)
 			{
-				if (tree[curr].bl[i - 1] != -1)
-				{
-					tree[curr].bl[i] = tree[tree[curr].bl[i - 1]].bl[i - 1];
-				}
-				else
-					break;
+				tree[curr].bl[i] = tree[tree[curr].bl[i - 1]].bl[i - 1];
 			}
+			else
+				tree[curr].bl[i] = -1;
 		}
+
 		for (auto it : adj[curr])
 		{
 			if (it != par)
@@ -49,7 +51,7 @@ public:
 	}
 	int get_kth(int curr, int k)
 	{
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < LIFT_SIZE; i++)
 		{
 			if (curr == -1)
 				return curr;
@@ -72,7 +74,7 @@ public:
 		if (a == b)
 			return a;
 
-		for (int i = 19; i >= 0; i--)
+		for (int i = LIFT_SIZE - 1; i >= 0; i--)
 		{
 
 			if (tree[a].bl[i] != tree[b].bl[i])
@@ -97,7 +99,7 @@ public:
 		}
 		if (a == b)
 			return dis;
-		for (int i = 19; i >= 0; i--)
+		for (int i = LIFT_SIZE; i >= 0; i--)
 		{
 
 			if (tree[a].bl[i] != tree[b].bl[i])
@@ -109,9 +111,11 @@ public:
 		}
 		return dis + 2;
 	}
-	binaryLifting(vector<vector<int>>&adj)
+
+	binaryLifting(vector<vector<int>>&adj, vector<int>&A)
 	{
 		this->adj = adj;
+		this->A = A;
 		int N = adj.size();
 		tree.resize(N);
 		d_dfs(0, -1, 0);

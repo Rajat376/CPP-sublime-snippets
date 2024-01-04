@@ -1,0 +1,87 @@
+<snippet>
+	<content><![CDATA[
+class _2sat
+{
+public:
+	vector<vector<int>>adj;
+	int N;
+	_2sat(int N)	// no of nodes
+	{
+		adj.resize(N * 2);
+		this->N = N;
+	}
+	void imply(int a, int b)	// addedge in base 1 for not write no as -ve
+	{
+		if (a < 0)
+			a = abs(a) + N;
+		if (b < 0)
+			b = abs(b) + N;
+		a--;
+		b--;
+		adj[a].push_back(b);
+	}
+	void bimply(int a, int b)	// same as imply but both side edges
+	{
+		if (a < 0)
+			a = abs(a) + N;
+		if (b < 0)
+			b = abs(b) + N;
+		a--;
+		b--;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	void either(int a, int b)
+	{
+		imply(-a, b);
+		imply(-b, a);
+	}
+	bool process()
+	{
+		kosaraju kosa(adj);
+		vector<int>comp(N * 2, -1);
+		for (int i = 0; i < kosa.clusters.size(); i++)
+		{
+			for (auto it : kosa.clusters[i])
+			{
+				comp[it] = i;
+				if (it >= N && comp[it - N] == i)
+					return false;
+				if (it < N && comp[it + N] == i)
+					return false;
+			}
+		}
+		return true;
+	}
+	pair<int, vector<bool>> processSoln()		// 1 means keep 0 means not keep
+	{
+		kosaraju kosa(adj);
+		vector<int>comp(N * 2, -1);
+		for (int i = 0; i < kosa.clusters.size(); i++)
+		{
+			for (auto it : kosa.clusters[i])
+			{
+				comp[it] = i;
+				if (it >= N && comp[it - N] == i)
+					return {false, {}};
+				if (it < N && comp[it + N] == i)
+					return {false, {}};
+			}
+		}
+		vector<bool>ans(N + 1, false);
+		for (int i = 0; i < N; i++)
+		{
+			if (comp[i] > comp[i + N])
+				ans[i + 1] = true;
+		}
+
+		return {true, ans};
+
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>2sat</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

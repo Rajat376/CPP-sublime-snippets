@@ -1,0 +1,94 @@
+<snippet>
+	<content><![CDATA[
+class Segments
+{
+public:
+	class Node {
+	public:
+		Node *left, *right;
+		int id;
+	} *node;
+	vector<int>v;
+	vector<set<pair<int, int>, greater<pair<int, int>>>>ranges;
+	int N;
+	int cnt = 1;
+	void build(int L, int R, Node*root)
+	{
+		// debug(L, R);
+		root->id = cnt;
+		cnt++;
+		ranges[L].insert({R, root->id});
+		if (L == R)
+		{
+			v[L] = root->id;
+			return;
+		}
+		int mid = (L + R) / 2;
+		root->left = new Node();
+		root->right = new Node();
+		build(L, mid, root->left);
+		build(mid + 1, R, root->right);
+
+
+	}
+	void traverse(int L, int R, Node * root, vector<array<int, 3>>&v)
+	{
+		if (L == R)
+			return;
+		v.push_back({root->id, root->left->id, root->right->id});
+		int mid = (L + R) / 2;
+		traverse(L, mid, root->left, v) ;
+		traverse(mid + 1, R, root->right, v);
+
+	}
+	void traverse(vector<array<int, 3>>&v)
+	{
+		traverse(1, N, node, v);
+	}
+	void getsegments(int L, int R, int r, Node *root , int k, vector<pair<int, int>>&v)
+	{
+		if (root == NULL)
+			return;
+		// debug(L, R);
+		int mid = (L + R) / 2;
+		debug(L, R);
+		if (L +	k - 1 > R)
+		{
+			if (max(r, R + 1) <= N)
+			{
+				r = max(r, R + 1);
+				auto it = ranges[r].upper_bound(pair<int, int> {L + k, 0});
+				if (it != ranges[r].end())
+				{
+					int key = it->first;
+					int id = it->second;
+					v.push_back({root->id, id});
+					debug(k, L, R, r, key);
+					r = key + 1;
+				}
+			}
+		}
+		getsegments(L, mid, r, root->left, k, v);
+		getsegments(mid + 1, R, r, root->right, k, v);
+
+	}
+	void getsegments(int k, vector<pair<int, int>>&v)
+	{
+		getsegments(1, N, 1, node, k, v);
+	}
+	Segments(int N)
+	{
+		this->N = N;
+		node = new Node();
+		v.resize(N + 1);
+		ranges.resize(N + 1);
+		build(1, N, node);
+
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>segments for 2sat</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

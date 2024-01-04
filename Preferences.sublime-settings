@@ -1,5 +1,5 @@
 {
-	"font_size": 14,
+	"font_size": 15,
 	"save_on_focus_lost": true,
 	"ignored_packages":
 	[
@@ -10,4 +10,5 @@
 	"theme": "auto",
 	"dark_theme": "Adaptive.sublime-theme",
 	"light_theme": "Default.sublime-theme",
+	"index_files": true,
 }

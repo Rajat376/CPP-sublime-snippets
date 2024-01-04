@@ -1,0 +1,49 @@
+<snippet>
+	<content><![CDATA[
+class Bridges
+{
+public:
+	vector<vector<array<int, 2>>>&adj;	 // it[0] is node,it[1] is edge no
+	vector<bool>isbridge;
+	vector<int>tin;
+	vector<int>low;
+	int t = 1;
+	int lowlink(int curr, int par)
+	{
+		if (tin[curr])
+			return low[curr];
+		tin[curr] = t++;
+		low[curr] = tin[curr];
+		for (auto it : adj[curr])
+		{
+			if (it[0] == par)
+				continue;
+			int l = lowlink(it[0], curr);
+			if (l > tin[curr])
+				isbridge[it[1]] = true;
+			low[curr] = min(low[curr], l);
+		}
+		return low[curr];
+	}
+	Bridges(vector<vector<array<int, 2>>>&adj, int M): adj(adj)
+	{
+		int N = adj.size();
+
+		isbridge.resize(M, false);
+		tin.resize(N);
+		low.resize(N);
+		for (int i = 0; i < N; i++)
+		{
+			if (!(tin[i]))
+				lowlink(i, -1);
+		}
+		// just lowlink(0) can be used if graph is connected
+	}
+
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>bridges</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

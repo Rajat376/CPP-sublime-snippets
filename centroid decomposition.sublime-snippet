@@ -1,0 +1,63 @@
+<snippet>
+	<content><![CDATA[
+vector<bool>intree(N, true);
+		// idea using centroid decomposition
+		vector<int>dp(N);
+		function < void(int, char, int)> decompose = [&](int root, char c, int size)
+		{
+			// debug(root);
+
+			function<int(int, int)>dfs = [&](int curr, int par)
+			{
+				int sz = 1;
+				for (auto it : adj[curr])
+				{
+					if (it != par && intree[it])
+						sz += dfs(it, curr);
+				}
+				return dp[curr] = sz;
+			};
+			int curr = root;
+			int par = -1;
+			dfs(root, -1);
+			while (dp[curr] > size / 2)
+			{
+				bool flag = false;
+				for (auto it : adj[curr])
+				{
+					if (intree[it] && it != par && dp[it] > size / 2)
+					{
+						flag = true;
+						par = curr;
+						curr = it;
+						break;
+
+					}
+				}
+				if (!flag)
+					break;
+			}
+			// debug(curr, c);
+			ans[curr] = c;
+			c++;
+			intree[curr] = false;
+			size--;
+			for (auto it : adj[curr])
+			{
+				if (intree[it])
+				{
+					size -= dp[it];
+					decompose(it, c, dp[it]);
+				}
+			}
+			if (par != -1 && intree[par])
+				decompose(par, c, size);
+
+		};
+		decompose(0, 'A', N);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>centroid decomposition idea</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

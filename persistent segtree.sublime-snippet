@@ -1,105 +1,101 @@
 <snippet>
 	<content><![CDATA[
-class Node
-{
-public:
-	int val;
+struct Node {
+    int val;
+    Node* left, * right;
 
+    Node(int v = 0, Node* l = nullptr, Node* r = nullptr) : val(v), left(l), right(r) {}
 };
-class PST
-{
+
+constexpr int MAX_SIZE = 10000000;
+Node nodes[MAX_SIZE];
+int nodeCounter = 0;
+
+class PersistentSegmentTree {
 public:
-	PST*left;
-	PST*right;
-	Node node;
+    vector<Node*> versions;
+    vector<int> arr; // Store the array here
+    Node* garbage = getNode(0);
 
-	template <typename M>
-	void init(Node *root, int l, int r, M &num)
-	{
-		root->val = num;
-	}
-	template <typename M>
-	PST* updateNode(PST*pst, int l, int r, M &num)
-	{
-		PST* newpst = new PST();
-		init(&newpst->node, l, r, num);
-		return newpst;
-	}
-	Node unite(Node a , Node b)
-	{
-		Node res;
-		res.val = a.val + b.val;
-		return res;
-	}
-	PST()
-	{
-		this->left = NULL;
-		this->right = NULL;
-	}
-	template<typename M>
-	void build(PST *pst, int l, int r, vector<M>&v)
-	{
-		if (l == r)
-		{
-			init(&pst->node, l, r, v[l]);
-			return;
-		}
-		int m = ((l + r) >> 1);
-		pst->left = new PST();
-		pst->right = new PST();
-		build(pst->left, l, m, v);
-		build(pst->right, m + 1, r, v);
-		pst->node = unite(pst->left->node, pst->right->node);
-	}
-	template<typename M>
-	PST(vector<M>&v)
-	{
-		this->left = NULL;
-		this->right = NULL;
-		int N = v.size();
-		build(this, 0, N - 1, v);
+    Node* getNode(int val, Node* l = nullptr, Node* r = nullptr) {
+        if (nodeCounter < MAX_SIZE) {
+            nodes[nodeCounter].val = val;
+            nodes[nodeCounter].left = l;
+            nodes[nodeCounter].right = r;
+            return &nodes[nodeCounter++];
+        }
+        return nullptr;
+    }
 
-	}
-	Node get(PST *pst, int l, int r, int L, int R)
-	{
-		int m = ((L + R) >> 1);
-		if (L >= l && R <= r)
-			return pst->node;
-		else if (r <= m)
-			return get(pst->left, l, r, L, m);
-		else if (l > m)
-			return get(pst->right, l, r, m + 1, R);
-		else
-			return unite(get(pst->left, l, r, L, m), get(pst->right, l, r, m + 1, R));
-	}
-	Node get(int l, int r, int N)
-	{
-		return get(this, l, r, 0, N - 1);
-	}
-	template<typename M>
-	PST* update(PST *pst, int x, int L, int R, M &num)
-	{
-		if (L == R)
-		{
-			return updateNode(pst, L, R, num);
-		}
-		int m = ((L + R) >> 1);
-		PST *newpst = new PST();
-		newpst->left = pst->left;
-		newpst->right = pst->right;
-		if (x <= m)
-			newpst->left = update(pst->left, x, L, m, num);
-		else
-			newpst->right = update(pst->right, x, m + 1, R, num);
-		newpst->node = unite(newpst->left->node, newpst->right->node);
-		return newpst;
-	}
-	template<typename M>
-	PST *upd(int x, int N, M&num)
-	{
-		return update(this, x, 0, N - 1, num);
-	}
+    Node* unite(Node* leftNode, Node* rightNode) {
+        return getNode(leftNode->val + rightNode->val, leftNode, rightNode);
+    }
 
+    template<typename T>
+    Node* initNode(T val) {
+        return getNode(val);
+    }
+
+    template<typename T>
+    Node* upd(Node* prev, int low, int high, int idx, T val) {
+        if (low == high) {
+            return initNode(val);
+        }
+
+        int mid = (low + high) / 2;
+        if (idx <= mid) {
+            return unite(upd(prev->left, low, mid, idx, val), prev->right);
+        } else {
+            return unite(prev->left, upd(prev->right, mid + 1, high, idx, val));
+        }
+    }
+
+    Node* get(Node* node, int low, int high, int qlow, int qhigh) {
+        // debug(low, high, qlow, qhigh);
+        if (node == nullptr || qlow > high || qhigh < low) {
+            return garbage;
+        }
+
+        if (qlow <= low && qhigh >= high) {
+            return node;
+        }
+
+        int mid = (low + high) / 2;
+        return unite(get(node->left, low, mid, qlow, qhigh), get(node->right, mid + 1, high, qlow, qhigh));
+    }
+
+
+
+    PersistentSegmentTree(vector<int>& input_arr) : arr(input_arr) {
+        versions.push_back(build(0, arr.size() - 1, arr));
+    }
+
+    template<typename T>
+    void upd(int version, int idx, T val) {
+        versions.push_back(upd(versions[version], 0, (int)arr.size() - 1, idx, val));
+    }
+
+    template<typename T>
+    void upd(int idx, T val) {
+        upd(versions.size() - 1, idx, val);
+    }
+
+    Node* get(int version, int qlow, int qhigh) {
+        return get(versions[version], 0, (int)arr.size() - 1, qlow, qhigh);
+    }
+
+    Node* get(int qlow, int qhigh) {
+        return get(versions.back(), 0, (int)arr.size() - 1, qlow, qhigh);
+    }
+
+    Node* build(int low, int high, vector<int>& input_arr) {
+        if (low == high) {
+            return initNode(input_arr[low]);
+        }
+
+        int mid = (low + high) / 2;
+        return unite(build(low, mid, input_arr), build(mid + 1, high, input_arr));
+    }
 };
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
